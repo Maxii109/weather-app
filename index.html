@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>weather app</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=my_location" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=search" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- search section -->
+        <div class="search-section">
+            <div class="input-wrapper">
+                <img src="./images/search.svg" alt="">
+                <input class="search-input" type="search" placeholder="enter a city name">
+                
+            </div>
+            <button class="location-button">
+                <span class="material-symbols-rounded">my_location</span>
+            </button>
+        </div>
+
+        <!-- weatther section  -->
+        <div class="weather-section">
+            <!-- current waether -->
+            <div class="current-weather">
+                <img class="weather-icon" src="./images/clouds.svg" alt="">
+                <h2 class="temperature">0 <span>C</span></h2>
+                <p class="description">partly cloudy</p>
+                <div class="details">
+                    <p class="feels-like">Feels like: 0</p>
+                    <p class="humidity">Humidity: 0</p>
+                    <p class="wind-degree">Wind-degree: 0</p>
+                    <p class="wind-kph">Wind-kph: 0</p>
+                </div>
+            </div>
+            <!-- hourly weather forcast list -->
+             <div class="hourly-weather">
+                <ul class="weather-list">
+                    <li class="weather-item">
+                        <p class="time"> 00:00</p>
+                        <img class="weather-icon" src="./images/clear.svg" alt="">
+                        <p class="temperature"> 0C</p>
+                    </li>
+                    <li class="weather-item">
+                        <p class="time"> 00:00</p>
+                        <img class="weather-icon" src="./images/clear.svg" alt="">
+                        <p class="temperature"> 0C</p>
+                    </li>
+                    <li class="weather-item">
+                        <p class="time"> 00:00</p>
+                        <img class="weather-icon" src="./images/clear.svg" alt="">
+                        <p class="temperature"> 0C</p>
+                    </li>
+                    <li class="weather-item">
+                        <p class="time"> 00:00</p>
+                        <img class="weather-icon" src="./images/clear.svg" alt="">
+                        <p class="temperature"> 0C</p>
+                    </li>
+                    <li class="weather-item">
+                        <p class="time"> 00:00</p>
+                        <img class="weather-icon" src="./images/clear.svg" alt="">
+                        <p class="temperature"> 0C</p>
+                    </li>
+                    <li class="weather-item">
+                        <p class="time"> 00:00</p>
+                        <img class="weather-icon" src="./images/clear.svg" alt="">
+                        <p class="temperature"> 0C</p>
+                    </li>
+                    
+                </ul>
+             </div>
+        </div>
+    </div>
+</body>
+
+
+
+<script src="script.js"></script>
+</html>
