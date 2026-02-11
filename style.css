@@ -47,10 +47,35 @@ body{
 .input-wrapper img{
     position: absolute;
     top: 50%;
-    left: 17px;
+    right: 17px;
     transform: translatey(-50%);
     
 }
+
+.suggestions{
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    max-height: 220px;
+    overflow: auto;
+    z-index: 50;
+    border-radius: 6px;
+    padding: 6px 0;
+    display: none;
+}
+.suggestions li{
+    padding: 8px 14px;
+    cursor: pointer;
+    color: #fff;
+    font-weight: 500;
+}
+.suggestions li:hover{
+    background: rgba(255,255,255,0.04);
+}
+
 .search-input{
     height: 100%;
     width: 100%;
@@ -60,7 +85,7 @@ body{
     font-size: 1rem;
     font-weight: 500;
     border: 1px solid #5f41e4;
-    padding: 0 20px 0 50px;
+    padding: 0 50px 0 20px;
     transition: 0.3s ease-in-out;
     background-color: transparent;
     /* backdrop-filter: blur(3px); */
@@ -77,31 +102,7 @@ body{
     border-color:#563ad3 ;
 }
 
-.location-button{
-    height: 54px;
-    width: 56px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #fff;
-    outline: none;
-    border-radius: 6px;
-    border: 1px solid #beb0ff;
-    color:#5f41e4;
-    transition: 0.3s ease-in-out;
-    cursor: pointer;
-}
 
-.location-button:hover{
-    color:white;
-    background-color:#5f41e4 ;
-    border-color:#5f41e4 ;
-}
-
-.location-button span{
-    font-size: 1.3rem;
-}
 .weather-list{
     display: flex;
 }
@@ -118,6 +119,27 @@ body{
     padding: 0px 0px 10px 0;
     
 }
+
+.top-row{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    width: 100%;
+}
+
+.temp-location{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.location-display{
+    font-size: 0.95rem;
+    color: #bbb;
+    margin: 0;
+    font-weight: 500;
+}
 .details{
     margin-right: auto;
     color: #bbb;
@@ -125,7 +147,7 @@ body{
     display: flex;
     flex-direction: column;
     gap: 5px;
-    font-size: 17px;
+    font-size: 15px;
 }
 .current-weather .weather-icon{
     width: 140px;
@@ -135,13 +157,6 @@ body{
     font-size: 3.38rem;
     margin: 23px 0;
     display: flex;
-    color: #fff;
-}
-
-.current-weather .temperature span{
-    font-size: 1.56rem;
-    font-weight: 500;
-    margin: 5px 0 0 2px;
     color: #fff;
 }
 
