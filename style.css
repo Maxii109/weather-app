@@ -173,7 +173,7 @@ body{
 }
 .hourly-weather .weather-list{
     display: flex;
-    gap: 43px;
+    gap: 40px;
     padding-bottom: 16px;
     justify-content: center;
     color: #bbb;
@@ -181,6 +181,7 @@ body{
     overflow-x: auto;
     scrollbar-width: thin;
     scrollbar-color:#bfbfbf transparent ;
+    
 }
 
 .hourly-weather .weather-item{
@@ -189,6 +190,8 @@ body{
     align-items: center;
     gap: 7px;
     font-weight: 500;
+    
+    
 }
 
 /* .hourly-weather:hover .weather-list{
