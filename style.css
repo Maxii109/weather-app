@@ -34,6 +34,16 @@ body{
     box-shadow: 0 10px 30px rgba(5,10,30,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
     border: 1px solid rgba(255,255,255,0.04);
 }
+.app-title{
+    text-align: center;
+    color: #e6eef8;
+    font-size: 1.8rem;
+    font-weight: 700;
+    padding: 15px 25px 0px 25px;
+    margin: 0;
+    letter-spacing: 1px;
+}
+
 .search-section{
     display: flex;
     align-items: center;
@@ -192,13 +202,11 @@ body{
     display: flex;
     gap: 40px;
     padding-bottom: 16px;
-    justify-content: center;
+    justify-content: flex-start;
     color: #bbb;
-    /* margin-bottom: -16px; */
     overflow-x: auto;
     scrollbar-width: thin;
     scrollbar-color:#bfbfbf transparent ;
-    
 }
 
 .hourly-weather .weather-item{
@@ -224,7 +232,7 @@ body{
     max-width: 97%;
    }
    .search-section{
-    padding: 20px;
+    padding: 10px 20px 20px 20px ;
    }
    .hourly-weather{
     padding: 16px 20px;
@@ -238,8 +246,9 @@ body{
        display: none;
    }
    .search-input{
-       padding: 0 14px 0 12px;
-       font-size: 1rem;
+       padding: 0 10px 0 10px;
+       font-size: 0.85rem;
+       height: 46px;
    }
 
    .suggestions{

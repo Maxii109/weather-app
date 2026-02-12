@@ -4,6 +4,7 @@ let hourlyWeatherDiv = document.querySelector('.hourly-weather .weather-list')
 let suggestionsEl = document.querySelector('.suggestions')
 let lastRequestCoords = null
 let searchTimeout = null
+let autoScrollInterval = null
 
     const API_KEY = '6742520530b04ddaaf934118261102'
     const weatherCodes = {
@@ -171,8 +172,30 @@ function showNominatimSuggestions(list, query) {
                     </li>
                 `
         }).join('')
-        
+        startHourlyAutoScroll()
     }
+
+    // auto-scroll hourly weather list smoothly left and back
+    function startHourlyAutoScroll() {
+        if (autoScrollInterval) clearInterval(autoScrollInterval)
+        if (!hourlyWeatherDiv) return
+        
+        let scrollDirection = 1 // 1 = left, -1 = right
+        let isScrolling = false
+        
+        autoScrollInterval = setInterval(() => {
+            if (!hourlyWeatherDiv || isScrolling) return
+            const maxScroll = hourlyWeatherDiv.scrollWidth - hourlyWeatherDiv.clientWidth
+            const currentScroll = hourlyWeatherDiv.scrollLeft
+            
+            // reverse direction at the ends
+            if (currentScroll >= maxScroll - 5) scrollDirection = -1
+            if (currentScroll <= 5) scrollDirection = 1
+            
+            hourlyWeatherDiv.scrollLeft += scrollDirection * 2
+        }, 30)
+    }
+
     const  getWeatheDetails = async (API_URL) =>{
         // const API_URL = `http://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${cityName}&days=2`
 
