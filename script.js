@@ -18,6 +18,137 @@ let searchTimeout = null
 
     }
 
+// detect Arabic characters
+function isArabic(text) {
+    return /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/.test(text)
+}
+
+// search using Nominatim for Arabic queries (returns Arabic display names when accept-language=ar)
+async function searchNominatim(query) {
+    try {
+        const url = `https://nominatim.openstreetmap.org/search?format=json&limit=6&addressdetails=1&accept-language=ar&q=${encodeURIComponent(query)}`
+        const resp = await fetch(url, { headers: { 'User-Agent': 'weather-app-local' } })
+        const results = await resp.json()
+        showNominatimSuggestions(results, query)
+    } catch (err) {
+        console.error('Nominatim search failed:', err)
+    }
+}
+
+// quick fallback map for common Arabic city names to English (helps when Nominatim returns unrelated matches)
+const arabicCityMap = {
+    'الخرطوم': 'Khartoum, Sudan',
+    'القاهرة': 'Cairo, Egypt',
+    'دمشق': 'Damascus, Syria',
+    'الرياض': 'Riyadh, Saudi Arabia',
+    'بغداد': 'Baghdad, Iraq',
+    'عمان': 'Amman, Jordan',
+    'بيروت': 'Beirut, Lebanon',
+    'طرابلس': 'Tripoli, Libya'
+}
+
+function showNominatimSuggestions(list, query) {
+    if (!suggestionsEl) return
+    if (!list || !list.length) {
+        if (query && query.length >= 2) {
+            suggestionsEl.innerHTML = `<li style="padding: 12px 14px; color: #ff6b6b; text-align: center;">City \"${query}\" not found</li>`
+            suggestionsEl.style.display = 'block'
+        } else {
+            suggestionsEl.innerHTML = ''
+            suggestionsEl.style.display = 'none'
+        }
+        return
+    }
+
+    // set RTL on suggestions and input for Arabic
+    suggestionsEl.setAttribute('dir', 'rtl')
+    searchInput.setAttribute('dir', 'rtl')
+    // Prefer populated-place types first to avoid out-of-the-way matches
+    
+    const populatedTypes = ['city','town','village','hamlet','locality']
+
+    // prepare normalizer and normalized query early (avoid usage-before-declaration)
+    const normalize = str => (str || '').toString().trim().toLowerCase()
+    const qNorm = normalize(query)
+
+    const filteredList = list.filter(item => {
+        if (!item) return false
+        // exact match in address fields
+        if (item.address) {
+            const addrFields = [item.address.city, item.address.town, item.address.village, item.address.hamlet, item.address.county, item.address.state, item.address.locality]
+            for (const f of addrFields) {
+                if (!f) continue
+                if (normalize(f) === qNorm) return true
+            }
+        }
+        // prefer populated types
+        if (item.type && populatedTypes.includes(item.type)) return true
+        return false
+    })
+    if (filteredList.length) {
+        
+    }
+    const useList = filteredList.length ? filteredList : list
+
+    // Rank results: prefer exact/near-exact matches in address fields and display_name, and prefer city/town types
+    const scored = useList.map((item, idx) => {
+        const label = item.display_name || (item.name || query)
+        const labelNorm = normalize(label)
+        let score = 0
+
+        // importance from Nominatim (0..1) scaled
+        if (item.importance) score += Number(item.importance) * 100
+
+        // exact address field match -> very high priority
+        if (item.address) {
+            const addr = item.address
+            const fields = [addr.city, addr.town, addr.village, addr.hamlet, addr.county, addr.state, addr.locality]
+            for (const f of fields) {
+                if (!f) continue
+                const fn = normalize(f)
+                if (fn === qNorm) score += 1200
+                else if (fn.startsWith(qNorm)) score += 600
+                else if (fn.includes(qNorm)) score += 300
+            }
+        }
+
+        // display_name matching
+        if (labelNorm === qNorm) score += 900
+        else if (labelNorm.startsWith(qNorm)) score += 450
+        else if (labelNorm.includes(qNorm)) score += 200
+
+        // prefer place types that represent populated places
+        if (item.type && ['city','town','village','hamlet','locality'].includes(item.type)) score += 200
+
+        // small tie-breaker to preserve original order
+        score += (list.length - idx) * 0.001
+        return { item, label, score }
+    }).sort((a,b) => b.score - a.score)
+
+    // debug log top candidates
+    
+    if (useList !== list) {
+        
+    }
+
+    suggestionsEl.innerHTML = scored.map(({item,label}) => {
+        return `<li data-q="${encodeURIComponent(item.lat + ',' + item.lon)}">${label}</li>`
+    }).join('')
+    suggestionsEl.style.display = 'block'
+
+    Array.from(suggestionsEl.querySelectorAll('li')).forEach(li => {
+        li.addEventListener('click', () => {
+            const q = decodeURIComponent(li.getAttribute('data-q'))
+            searchInput.value = ''
+            suggestionsEl.innerHTML = ''
+            suggestionsEl.style.display = 'none'
+            lastRequestCoords = null
+            // q will be lat,lon — WeatherAPI accepts q=lat,lon
+            setupWeatherRequest(q)
+        })
+    })
+}
+
     const displayHourlyForcast = (hourlyData)=>{
         const currentHour = new Date().setMinutes(0,0,0)
         const next24Hours = currentHour + 24 * 60 * 60 * 1000
@@ -48,7 +179,7 @@ let searchTimeout = null
         try {
             const response = await fetch(API_URL)
             const data = await response.json()
-            console.log('Weather API response:', data)
+            
 
             if (!data || !data.location) {
                 console.error('Unexpected API response (no location):', data)
@@ -82,8 +213,6 @@ let searchTimeout = null
             }
 
             if (combindHourlyData.length) displayHourlyForcast(combindHourlyData)
-
-            console.log('Resolved location:', data.location)
 
             // Display city and country beside the temperature
             const locationDisplayEl = currentWeatherDiv.querySelector('.location-display')
@@ -148,18 +277,16 @@ let searchTimeout = null
             const suggestions = Array.from(suggestionsEl.querySelectorAll('li'))
             // Find first suggestion that has data-q attribute (actual search results, not error message)
             const firstValidSuggestion = suggestions.find(li => li.getAttribute('data-q'))
-            if (firstValidSuggestion) {
-                console.log('Auto-selecting first suggestion:', firstValidSuggestion.innerText)
+                if (firstValidSuggestion) {
                 firstValidSuggestion.click()
                 return
             }
         }
-        // Fallback: if still no valid suggestions, proceed with direct query
-        lastRequestCoords = null
-        setupWeatherRequest(cityName)
+        // No suggestions available — do not auto-search. Let the user pick from suggestions.
+        return
     }
 
-    })
+})
 
     // debounce and search suggestions using WeatherAPI search endpoint
     searchInput.addEventListener('input', (e) => {
@@ -169,6 +296,8 @@ let searchTimeout = null
             if (suggestionsEl) {
                 suggestionsEl.innerHTML = ''
                 suggestionsEl.style.display = 'none'
+                suggestionsEl.removeAttribute('dir')
+                searchInput.removeAttribute('dir')
             }
             return
         }
@@ -177,9 +306,39 @@ let searchTimeout = null
 
     async function searchLocations(query) {
         try {
+            // if Arabic characters detected, first check a small mapping (fast fallback), else use Nominatim
+            if (isArabic(query)) {
+                const normalize = str => (str || '').toString().trim()
+                const qNorm = normalize(query)
+                if (arabicCityMap[qNorm]) {
+                    // show the mapped English suggestion instead of auto-searching
+                    const mapped = arabicCityMap[qNorm]
+                    suggestionsEl.removeAttribute('dir')
+                    searchInput.removeAttribute('dir')
+                    suggestionsEl.innerHTML = `<li data-q="${encodeURIComponent(mapped)}">${mapped}</li>`
+                    suggestionsEl.style.display = 'block'
+                    Array.from(suggestionsEl.querySelectorAll('li')).forEach(li => {
+                        li.addEventListener('click', () => {
+                            const q = decodeURIComponent(li.getAttribute('data-q'))
+                            searchInput.value = ''
+                            suggestionsEl.innerHTML = ''
+                            suggestionsEl.style.display = 'none'
+                            lastRequestCoords = null
+                            setupWeatherRequest(q)
+                        })
+                    })
+                    return
+                }
+                await searchNominatim(query)
+                return
+            }
+
             const url = `https://api.weatherapi.com/v1/search.json?key=${API_KEY}&q=${encodeURIComponent(query)}`
             const resp = await fetch(url)
             const results = await resp.json()
+            // ensure LTR for non-Arabic results
+            suggestionsEl.removeAttribute('dir')
+            searchInput.removeAttribute('dir')
             showSuggestions(results, query)
         } catch (err) {
             console.error('Location search failed:', err)
@@ -187,19 +346,46 @@ let searchTimeout = null
     }
 
     function showSuggestions(list, query) {
-    if (!suggestionsEl) return
-    if (!list || !list.length) {
-        if (query && query.length >= 2) {
-            suggestionsEl.innerHTML = `<li style="padding: 12px 14px; color: #ff6b6b; text-align: center;">City "${query}" not found</li>`
-            suggestionsEl.style.display = 'block'
-        } else {
-            suggestionsEl.innerHTML = ''
-            suggestionsEl.style.display = 'none'
+        if (!suggestionsEl) return
+        if (!list || !list.length) {
+            if (query && query.length >= 2) {
+                suggestionsEl.innerHTML = `<li style="padding: 12px 14px; color: #ff6b6b; text-align: center;">City \"${query}\" not found</li>`
+                suggestionsEl.style.display = 'block'
+            } else {
+                suggestionsEl.innerHTML = ''
+                suggestionsEl.style.display = 'none'
+            }
+            return
         }
-        return
-    }
-    suggestionsEl.innerHTML = list.map(item => `<li data-q="${encodeURIComponent(item.name + (item.region ? ', ' + item.region : '') + ', ' + item.country)}">${item.name}${item.region ? ', ' + item.region : ''}, ${item.country}</li>`).join('')
-    suggestionsEl.style.display = 'block'
+
+        // Rank WeatherAPI search suggestions: prefer name/region that startsWith query, then includes
+        const normalize = s => (s || '').toString().trim().toLowerCase()
+        const qNorm = normalize(query)
+
+        const scored = list.map((item, idx) => {
+            const name = item.name || ''
+            const region = item.region || ''
+            const country = item.country || ''
+            const label = `${name}${region ? ', ' + region : ''}, ${country}`
+            const nameNorm = normalize(name)
+            const regionNorm = normalize(region)
+            const countryNorm = normalize(country)
+            let score = 0
+            if (nameNorm === qNorm) score += 1000
+            else if (nameNorm.startsWith(qNorm)) score += 600
+            else if (nameNorm.includes(qNorm)) score += 300
+            if (regionNorm === qNorm) score += 200
+            else if (regionNorm.includes(qNorm)) score += 80
+            if (countryNorm === qNorm) score += 150
+            // small boost for results earlier in the list
+            score += (list.length - idx) * 0.5
+            return { item, label, score }
+        }).sort((a,b) => b.score - a.score)
+
+    
+
+        suggestionsEl.innerHTML = scored.map(({item,label}) => `<li data-q="${encodeURIComponent(item.name + (item.region ? ', ' + item.region : '') + ', ' + item.country)}">${label}</li>`).join('')
+        suggestionsEl.style.display = 'block'
         // attach click handlers
         Array.from(suggestionsEl.querySelectorAll('li')).forEach(li => {
             li.addEventListener('click', () => {

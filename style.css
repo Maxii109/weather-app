@@ -11,10 +11,10 @@
 
 body{
     font-family: "Share Tech", sans-serif;
-    background-image: url(./images/transparent2.png);
-    /* backdrop-filter: blur(7px); */
-    /* background: linear-gradient(45deg,blue,black); */
-    background-color: blue;
+    background: radial-gradient(ellipse at top left, #1b1464 0%, #0f172a 45%, #071428 100%);
+    color: #e6eef8;
+    background-image: url(./images/transparent2.png), radial-gradient(ellipse at top left, rgba(27,20,100,0.18) 0%, rgba(15,23,42,0.6) 40%);
+    background-blend-mode: overlay;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -25,12 +25,13 @@ body{
 }
 
 .container{
-    background-color: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(1px);
-    border-radius: 10px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    backdrop-filter: blur(1px) saturate(120%);
+    border-radius: 14px;
     max-width: 420px;
     flex-grow: 1;
-    box-shadow: 0 0 15px 1px black;
+    box-shadow: 0 10px 30px rgba(5,10,30,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
 }
 .search-section{
     display: flex;
@@ -47,59 +48,70 @@ body{
 .input-wrapper img{
     position: absolute;
     top: 50%;
-    right: 17px;
-    transform: translatey(-50%);
-    
+    right: 14px;
+    transform: translateY(-50%);
+    filter: invert(100%) opacity(0.9) drop-shadow(0 2px 6px rgba(0,0,0,0.3));
 }
 
 .suggestions{
     position: absolute;
-    top: calc(100% + 6px);
+    top: calc(100% + 8px);
     left: 0;
     right: 0;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.08);
-    max-height: 220px;
+    background: linear-gradient(180deg, rgba(9,12,25,0.75), rgba(12,16,30,0.9));
+    border: 1px solid rgba(255,255,255,0.03);
+    max-height: 240px;
     overflow: auto;
     z-index: 50;
-    border-radius: 6px;
+    border-radius: 8px;
     padding: 6px 0;
     display: none;
+    box-shadow: 0 8px 30px rgba(2,6,23,0.6);
+    backdrop-filter: blur(6px) saturate(120%);
 }
 .suggestions li{
-    padding: 8px 14px;
+    padding: 10px 14px;
     cursor: pointer;
-    color: #fff;
-    font-weight: 500;
+    color: #dfe9ff;
+    font-weight: 600;
 }
 .suggestions li:hover{
-    background: rgba(255,255,255,0.04);
+    background: rgba(255,255,255,0.02);
 }
 
 .search-input{
     height: 100%;
     width: 100%;
-    border-radius: 6px;
-    text-transform: uppercase;
+    border-radius: 10px;
+    text-transform: none;
     outline: none;
-    font-size: 1rem;
-    font-weight: 500;
-    border: 1px solid #5f41e4;
-    padding: 0 50px 0 20px;
-    transition: 0.3s ease-in-out;
-    background-color: transparent;
-    /* backdrop-filter: blur(3px); */
-    color: #fff;
-
+    font-size: 0.98rem;
+    font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 0 50px 0 18px;
+    transition: 0.22s ease-in-out;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    color: #eaf0ff;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
 }
 .search-input::placeholder{
     text-transform: none;
-    color: #bbb;
-    
+    color: #aeb8d9;
+}
+
+/* RTL adjustments for Arabic input */
+.search-input[dir="rtl"]{
+    direction: rtl;
+    text-align: right;
+}
+.suggestions[dir="rtl"] li{
+    direction: rtl;
+    text-align: right;
 }
 
 .search-input:focus{
-    border-color:#563ad3 ;
+    border-color: rgba(120,95,255,0.9);
+    box-shadow: 0 6px 20px rgba(95,65,228,0.12);
 }
 
 
@@ -136,9 +148,9 @@ body{
 
 .location-display{
     font-size: 0.95rem;
-    color: #bbb;
+    color: #dfe9ff;
     margin: 0;
-    font-weight: 500;
+    font-weight: 600;
 }
 .details{
     margin-right: auto;
@@ -150,21 +162,25 @@ body{
     font-size: 15px;
 }
 .current-weather .weather-icon{
-    width: 140px;
+    width: 130px;
     aspect-ratio: 1;
+    filter: drop-shadow(0 6px 18px rgba(95,65,228,0.18));
 }
 .current-weather .temperature{
-    font-size: 3.38rem;
-    margin: 23px 0;
+    font-size: 4.2rem;
+    margin: 10px 0 6px 0;
     display: flex;
     color: #fff;
+    font-weight: 700;
+    letter-spacing: -1px;
+    text-shadow: 0 6px 18px rgba(20,12,60,0.45);
 }
 
 .current-weather .description{
-    font-size: 1.25rem;
-    font-weight: 500;
-    color: #bbb;
-    margin-bottom: 15px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #cbd7ff;
+    margin-bottom: 12px;
 }
 .hourly-weather{
     padding: 16px 25px;
