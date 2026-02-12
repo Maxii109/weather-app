@@ -168,7 +168,7 @@ function showNominatimSuggestions(list, query) {
                     <li class="weather-item">
                         <p class="time"> ${time}</p>
                         <img class="weather-icon" src="./images/${weatherIcon}.svg" alt="">
-                        <p class="temperature"> ${temprature}°C</p>
+                        <p class="temperature"> ${temprature}°</p>
                     </li>
                 `
         }).join('')
