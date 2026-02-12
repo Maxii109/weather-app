@@ -12,6 +12,7 @@
 body{
     font-family: "Share Tech", sans-serif;
     background: radial-gradient(ellipse at top left, #1b1464 0%, #0f172a 45%, #071428 100%);
+    
     color: #e6eef8;
     background-image: url(./images/transparent2.png), radial-gradient(ellipse at top left, rgba(27,20,100,0.18) 0%, rgba(15,23,42,0.6) 40%);
     background-blend-mode: overlay;
@@ -230,6 +231,35 @@ body{
    }
    .hourly-weather .weather-list{
     gap: 32px;
+   }
+
+   /* Mobile tweaks to avoid clipped placeholder and truncated hourly text */
+   .input-wrapper img{
+       display: none;
+   }
+   .search-input{
+       padding: 0 14px 0 12px;
+       font-size: 1rem;
+   }
+
+   .suggestions{
+       left: 0;
+       right: 0;
+   }
+
+   .hourly-weather{
+       padding: 12px 14px;
+   }
+   .hourly-weather .weather-list{
+       gap: 18px;
+       padding-bottom: 12px;
+   }
+   .hourly-weather .weather-item{
+       min-width: 64px;
+   }
+   .hourly-weather .weather-item .temperature{
+       white-space: nowrap;
+       font-size: 0.95rem;
    }
 }
 
