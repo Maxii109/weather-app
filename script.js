@@ -213,7 +213,7 @@ function showNominatimSuggestions(list, query) {
 
             const temprature = Math.floor(data.current.temp_c)
             const description = data.current.condition.text
-            const feelsLike = data.current.feelslike_c
+            const feelsLike = Math.ceil(data.current.feelslike_c)
             const humidity = data.current.humidity
             const wind_degree = data.current.wind_degree
             const wind_kph = data.current.wind_kph
