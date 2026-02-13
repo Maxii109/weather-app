@@ -2,6 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech&display=swap');
 
 
+
 *{
     padding: 0;
     margin: 0;
@@ -56,11 +57,13 @@ body{
     position: relative;
 }
 
-.input-wrapper img{
+.input-wrapper span{
     position: absolute;
-    top: 50%;
+    top: 45%;
     right: 14px;
     transform: translateY(-50%);
+    /* color: #aeb8d9; */
+    color: red;
     filter: invert(100%) opacity(0.9) drop-shadow(0 2px 6px rgba(0,0,0,0.3));
 }
 
@@ -108,7 +111,8 @@ body{
 .search-input::placeholder{
     text-transform: none;
     color: #aeb8d9;
-    font-family: "Share Tech", sans-serif;
+    
+     
 
 }
 
@@ -245,9 +249,9 @@ body{
    }
 
    /* Mobile tweaks to avoid clipped placeholder and truncated hourly text */
-   .input-wrapper img{
+   /* .input-wrapper img{
        display: none;
-   }
+   } */
    .search-input{
        padding: 0 10px 0 10px;
        font-size: 0.85rem;
