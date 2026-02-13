@@ -121,6 +121,10 @@ body{
     direction: rtl;
     text-align: right;
 }
+.search-input[dir="rtl"]::placeholder{
+    direction: rtl;
+    text-align: left;
+}
 .suggestions[dir="rtl"] li{
     direction: rtl;
     text-align: right;
